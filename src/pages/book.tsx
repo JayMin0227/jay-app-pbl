@@ -1768,12 +1768,97 @@ export default function MemoApp() {
 
 
 
-  const groupedMemos = memos.reduce((acc: Record<string, Memo[]>, memo) => {
-    const date = memo.created_at.split("T")[0];
-    if (!acc[date]) acc[date] = [];
-    acc[date].push(memo);
-    return acc;
-  }, {});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // const groupedMemos = memos.reduce((acc: Record<string, Memo[]>, memo) => {
+  //   const date = memo.created_at.split("T")[0];
+  //   if (!acc[date]) acc[date] = [];
+  //   acc[date].push(memo);
+  //   return acc;
+  // }, {});
+
+  // const groupedMemos = (filteredMemos.length > 0 ? filteredMemos : memos).reduce(
+  //   (acc: Record<string, Memo[]>, memo) => {
+  //     const date = memo.created_at.split("T")[0];
+  //     if (!acc[date]) acc[date] = [];
+  //     acc[date].push(memo);
+  //     return acc;
+  //   },
+  //   {}
+  // );
+
+
+
+  // const groupedMemos = (filteredMemos.length > 0 ? filteredMemos : memos).reduce(
+  //   (acc: Record<string, Memo[]>, memo) => {
+  //     try {
+  //       // 日付フォーマットの安全性を確認
+  //       const date = memo.created_at.split("T")[0];
+  //       if (!acc[date]) acc[date] = [];
+  //       acc[date].push(memo);
+  //     } catch (err) {
+  //       console.error("日付のフォーマットエラー:", memo.created_at, err);
+  //     }
+  //     return acc;
+  //   },
+  //   {}
+  // );
+  
+  
+
+
+  const groupedMemos = (filteredMemos.length > 0 ? filteredMemos : memos).reduce(
+    (acc: Record<string, Memo[]>, memo) => {
+      // `created_at` から日付部分を抽出（スペースで区切る）
+      const date = memo.created_at.split(" ")[0];
+      if (!acc[date]) acc[date] = [];
+      acc[date].push(memo);
+      return acc;
+    },
+    {}
+  );
+
+  
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   if (isLoading) {
     return (
@@ -2010,8 +2095,32 @@ export default function MemoApp() {
 
 
 
-        {filteredMemos.length > 0
-  ? filteredMemos.map((memo) => (
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+ {Object.entries(groupedMemos).map(([date, memos]) => (
+  <Box key={date} id={`section-${date}`} p="4" borderWidth="1px" borderRadius="md" bg="white" shadow="sm">
+    {/* 日付ヘッダー */}
+    <Text fontWeight="bold" fontSize="lg" mb="2">
+      {formatDate(date)}
+    </Text>
+    {memos.map((memo) => (
       <Box key={memo.id} p="4" borderWidth="1px" borderRadius="md" bg="white" shadow="sm">
         <TableContainer>
           <Table variant="simple" size="sm">
@@ -2025,220 +2134,141 @@ export default function MemoApp() {
             </Thead>
             <Tbody>
               <Tr>
-              <Td
-  whiteSpace="normal"
-  textDecoration={memo.isCompleted ? "line-through" : "none"}
-  onClick={() => toggleComplete(memo.id)}
->
-  {memo.title}
-</Td>
-<Td
-  whiteSpace="normal"
-  textDecoration={memo.isCompleted ? "line-through" : "none"}
-  onClick={() => toggleComplete(memo.id)}
->
-  {memo.content}
-</Td>
-<Td>
-  {memo.tags.map((tag, index) => (
-    <Tag
-      key={index}
-      mr={1}
-      cursor="pointer"
-      textDecoration={memo.isCompleted ? "line-through" : "none"}
-      onClick={() => toggleComplete(memo.id)}
-    >
-      {tag}
-    </Tag>
-  ))}
-</Td>
-
-                <Td>
-                  <Button
-                    colorScheme="blue"
-                    size="sm"
-                    onClick={() => {
-                      setEditMemoId(memo.id);
-                      setNewTitle(memo.title);
-                      setNewContent(memo.content);
-                      setNewTags(memo.tags.join(", "));
-                    }}
-                  >
-                    編集
-                  </Button>
-                  <Button
-                    colorScheme="red"
-                    size="sm"
-                    onClick={() => deleteMemo(memo.id)}
-                  >
-                    削除
-                  </Button>
-                </Td>
+                {editMemoId === memo.id ? (
+                  <>
+                    {/* 編集モード */}
+                    <Td>
+                      <Input
+                        value={newTitle}
+                        onChange={(e) => setNewTitle(e.target.value)}
+                        placeholder="タイトルを入力"
+                      />
+                    </Td>
+                    <Td>
+                      <Input
+                        value={newContent}
+                        onChange={(e) => setNewContent(e.target.value)}
+                        placeholder="内容を入力"
+                      />
+                    </Td>
+                    <Td>
+                      <Input
+                        value={newTags}
+                        onChange={(e) => setNewTags(e.target.value)}
+                        placeholder="タグ (カンマ区切り)"
+                      />
+                    </Td>
+                    <Td>
+                      <Tooltip label="保存">
+                        <IconButton
+                          aria-label="Save Memo"
+                          icon={<CheckIcon />}
+                          colorScheme="green"
+                          bg="green.500"
+                          color="white"
+                          borderRadius="full"
+                          size="lg"
+                          _hover={{ bg: "green.600" }}
+                          onClick={() => saveEdit(memo.id)}
+                        />
+                      </Tooltip>
+                      <Tooltip label="キャンセル">
+                        <IconButton
+                          aria-label="Cancel Edit"
+                          icon={<CloseIcon />}
+                          colorScheme="red"
+                          bg="red.500"
+                          color="white"
+                          borderRadius="full"
+                          size="md"
+                          _hover={{ bg: "red.600" }}
+                          onClick={() => {
+                            setEditMemoId(null);
+                            setNewTitle("");
+                            setNewContent("");
+                            setNewTags("");
+                          }}
+                        />
+                      </Tooltip>
+                    </Td>
+                  </>
+                ) : (
+                  <>
+                    {/* 通常モード */}
+                    <Td
+                      whiteSpace="normal"
+                      textDecoration={memo.isCompleted ? "line-through" : "none"}
+                      onClick={() => toggleComplete(memo.id)}
+                      cursor="pointer"
+                    >
+                      {memo.title}
+                    </Td>
+                    <Td
+                      whiteSpace="normal"
+                      textDecoration={memo.isCompleted ? "line-through" : "none"}
+                      onClick={() => toggleComplete(memo.id)}
+                      cursor="pointer"
+                    >
+                      {memo.content}
+                    </Td>
+                    <Td>
+                      {memo.tags.map((tag, index) => (
+                        <Tag
+                          key={index}
+                          mr={1}
+                          cursor="pointer"
+                          maxWidth="100px"
+                          isTruncated
+                          px={2}
+                          fontSize="sm"
+                        >
+                          {tag}
+                        </Tag>
+                      ))}
+                    </Td>
+                    <Td>
+                      <Tooltip label="編集">
+                        <IconButton
+                          aria-label="Edit Memo"
+                          icon={<EditIcon />}
+                          colorScheme="blue"
+                          bg="blue.500"
+                          color="white"
+                          borderRadius="full"
+                          size="md"
+                          _hover={{ bg: "blue.600" }}
+                          onClick={() => {
+                            setEditMemoId(memo.id);
+                            setNewTitle(memo.title);
+                            setNewContent(memo.content);
+                            setNewTags(memo.tags.join(", "));
+                          }}
+                        />
+                      </Tooltip>
+                      <Tooltip label="削除">
+                        <IconButton
+                          aria-label="Delete Memo"
+                          icon={<DeleteIcon />}
+                          colorScheme="gray"
+                          bg="gray.500"
+                          color="white"
+                          borderRadius="full"
+                          size="md"
+                          _hover={{ bg: "gray.600" }}
+                          onClick={() => deleteMemo(memo.id)}
+                        />
+                      </Tooltip>
+                    </Td>
+                  </>
+                )}
               </Tr>
             </Tbody>
           </Table>
         </TableContainer>
       </Box>
-    ))
-  : Object.entries(groupedMemos).map(([date, memos]) => (
-      <Box key={date} id={`section-${date}`} p="4" borderWidth="1px" borderRadius="md" bg="white" shadow="sm">
-        <Text fontWeight="bold" fontSize="lg" mb="2">
-        {formatDate(date)}
-        </Text>
-            <TableContainer>
-  <Table variant="simple" size="sm">
-    <Thead>
-      <Tr>
-        <Th w="20%">タイトル</Th>
-        <Th w="50%">内容</Th>
-        <Th w="20%">タグ</Th>
-        <Th w="10%">操作</Th>
-      </Tr>
-    </Thead>
-
-
-
-
-
-    <Tbody>
-  {memos.map((memo) => (
-    <Tr key={memo.id}>
-      {editMemoId === memo.id ? (
-        // 編集モード
-        <>
-          <Td>
-            <Input
-              value={newTitle}
-              onChange={(e) => setNewTitle(e.target.value)}
-              placeholder="タイトルを入力"
-            />
-          </Td>
-          <Td>
-            <Input
-              value={newContent}
-              onChange={(e) => setNewContent(e.target.value)}
-              placeholder="内容を入力"
-            />
-          </Td>
-          <Td>
-            <Input
-              value={newTags}
-              onChange={(e) => setNewTags(e.target.value)}
-              placeholder="タグ (カンマ区切り)"
-            />
-          </Td>
-          <Td>
-
-
-          <Tooltip label="追加する">
-          <IconButton
-  aria-label="Add Memo"
-  icon={<CheckIcon boxSize={6} />} // チェックアイコンに変更
-  colorScheme="green"
-  bg="green.500" // 背景を緑色に
-  color="white" // アイコンを白色に
-  borderRadius="full" // 丸型
-  size="lg" // サイズを大きめに
-  _hover={{ bg: "green.600" }} // ホバー時に濃い緑色
-  _focus={{ boxShadow: "outline" }} // フォーカス時にアウトラインを表示
-  zIndex="10" // 他の要素の上に表示
-  onClick={() => saveEdit(memo.id)}
-
-/>
-
-</Tooltip>
-
-
-
-<Tooltip label="キャンセルする">
-<IconButton
-  aria-label="Cancel Edit"
-  icon={<CloseIcon boxSize={6} />} // キャンセルアイコン
-  colorScheme="red"
-  bg="red.500" // 背景を赤色に
-  color="white" // アイコンを白色に
-  borderRadius="full" // 丸型
-  size="md" // サイズを中程度に
-  _hover={{ bg: "red.600" }} // ホバー時に濃い赤色
-  _focus={{ boxShadow: "outline" }} // フォーカス時にアウトラインを表示
-  zIndex="10" // 他の要素の上に表示
-  onClick={() => {
-    setEditMemoId(null); // 編集モード解除
-    setNewTitle(""); // 入力値リセット
-    setNewContent("");
-    setNewTags("");
-  }}
-/>
-
-</Tooltip>
-
-
-
-
-          </Td>
-        </>
-      ) : (
-        // 通常モード
-        <>
-          {/* タイトル */}
-          <Td
-            whiteSpace="normal"
-            textDecoration={memo.isCompleted ? "line-through" : "none"} // 取り消し線を適用
-            onClick={() => toggleComplete(memo.id)} // クリックで状態をトグル
-            cursor="pointer" // クリック可能であることを示すカーソル
-          >
-            {memo.title}
-          </Td>
-
-          {/* 内容 */}
-          <Td
-            whiteSpace="normal"
-            textDecoration={memo.isCompleted ? "line-through" : "none"} // 取り消し線を適用
-            onClick={() => toggleComplete(memo.id)} // クリックで状態をトグル
-            cursor="pointer" // クリック可能であることを示すカーソル
-          >
-            {memo.content}
-          </Td>
-
-          {/* タグ */}
-          <Td>
-            {memo.tags.map((tag, index) => (
-
-
-
-
-
-              // <Tag
-              //   key={index}
-              //   mr={1}
-              //   textDecoration={memo.isCompleted ? "line-through" : "none"} // 取り消し線を適用
-              //   onClick={() => toggleComplete(memo.id)} // クリックで状態をトグル
-              //   cursor="pointer" // クリック可能であることを示すカーソル
-              // >
-              //   {tag}
-              // </Tag>
-
-              <Tag
-  key={index}
-  mr={1}
-  cursor="pointer"
-  maxWidth="100px" // タグの横幅を100pxに制限
-  isTruncated
-  px={2}
-  fontSize="sm" // フォントサイズを小さく
->
-  {tag}
-</Tag>
-
-
-
-
-
-
-
-
-            ))}
-          </Td>
+    ))}
+  </Box>
+))}
 
 
 
@@ -2250,62 +2280,40 @@ export default function MemoApp() {
 
 
 
-          <Td>
-            
-
-          <Tooltip label="編集する">
-          <IconButton
-  aria-label="Edit Memo"
-  icon={<EditIcon boxSize={6} />} // ペンアイコン
-  colorScheme="blue"
-  bg="blue.500" // 背景を青色に
-  color="white" // アイコンを白色に
-  borderRadius="full" // 丸型
-  size="md" // サイズを中程度に
-  _hover={{ bg: "blue.600" }} // ホバー時に濃い青色
-  _focus={{ boxShadow: "outline" }} // フォーカス時にアウトラインを表示
-  zIndex="10" // 他の要素の上に表示
-  onClick={() => {
-    setEditMemoId(memo.id); // 編集モード切り替え
-    setNewTitle(memo.title); // 編集データセット
-    setNewContent(memo.content);
-    setNewTags(memo.tags.join(", "));
-  }}
-/>
-</Tooltip>
 
 
-<Tooltip label="削除する">
-<IconButton
-  aria-label="Delete Memo"
-  icon={<DeleteIcon boxSize={6} />} // ゴミ箱アイコン
-  colorScheme="gray"
-  bg="gray.500" // 背景をグレーに
-  color="white" // アイコンを白色に
-  borderRadius="full" // 丸型
-  size="md" // サイズを中程度に
-  _hover={{ bg: "gray.600" }} // ホバー時に濃いグレー
-  _focus={{ boxShadow: "outline" }} // フォーカス時にアウトラインを表示
-  zIndex="10" // 他の要素の上に表示
-  onClick={() => deleteMemo(memo.id)} // 削除機能
-/>
-</Tooltip>
 
 
-          </Td>
-        </>
-      )}
-    </Tr>
-  ))}
-</Tbody>
 
-  </Table>
-</TableContainer>
 
-          </Box>
-        ))}
 
-        {/* 入力フォーム */}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
         <Box
           position="fixed"
           bottom="0"
