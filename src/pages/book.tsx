@@ -2163,7 +2163,7 @@ export default function MemoApp() {
       {formatDate(date)}
     </Text>
     {memos.map((memo) => (
-      <Box key={memo.id} p="4" borderWidth="1px" borderRadius="md" bg="white" shadow="sm">
+      <Box key={memo.id} p="3" borderWidth="1px" borderRadius="md" bg="white" shadow="sm">
         <TableContainer>
           <Table variant="simple" size="sm">
             <Thead>
