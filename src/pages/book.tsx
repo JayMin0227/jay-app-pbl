@@ -1470,7 +1470,7 @@ import { DeleteIcon, EditIcon, CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import { ArrowUpIcon,HamburgerIcon,ArrowBackIcon } from "@chakra-ui/icons"; // 必要に応じてアイコンを変更
 
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState} from "react";
 import {
 
   Table,
@@ -1497,6 +1497,8 @@ import { useRecoilState } from "recoil";
 import { LogoutButton } from "@/components/Buttons/LogOutButton";
 import { IconButton } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
+import { useCallback } from "react";
+
 
 
 
@@ -1622,12 +1624,17 @@ export default function MemoApp() {
   }, [router, setSession]);
   
   // セッション確認後にのみ fetchMemos を呼び出す
-  useEffect(() => {
-    if (!isLoading && session) {
-      fetchMemos();
-    }
-  }, [isLoading, session]);
+  // useEffect(() => {
+  //   if (!isLoading && session) {
+  //     fetchMemos();
+  //   }
+  // }, [isLoading, session]);
+
   
+  
+  
+
+
   // const fetchMemos = async () => {
   //   try {
   //     const res = await axios.get("http://localhost:8000/ideas");
@@ -1635,6 +1642,7 @@ export default function MemoApp() {
   //       ...memo,
   //       tags: ensureTagsArray(memo.tags),
   //       formattedDate: formatDate(memo.created_at),
+  //       isCompleted: memo.isCompleted ?? false, // デフォルト値として false を設定
   //     }));
   //     setMemos(sortedMemos);
   //   } catch (err) {
@@ -1642,9 +1650,7 @@ export default function MemoApp() {
   //   }
   // };
 
-
-
-  const fetchMemos = async () => {
+  const fetchMemos = useCallback(async () => {
     try {
       const res = await axios.get("http://localhost:8000/ideas");
       const sortedMemos = res.data.map((memo: Memo) => ({
@@ -1657,7 +1663,15 @@ export default function MemoApp() {
     } catch (err) {
       console.error(err);
     }
-  };
+  }, []); // 依存配列を空にする（必要なら依存関係を追加）
+
+
+  useEffect(() => {
+    if (!isLoading && session) {
+      fetchMemos();
+    }
+  }, [isLoading, session, fetchMemos]);
+  
 
   
 

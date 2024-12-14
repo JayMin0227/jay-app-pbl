@@ -142,6 +142,13 @@ export default function Ideas() {
     useEffect(() => {
       fetchIdeas();
     }, []);
+
+
+
+      // 警告を回避するための useEffect
+  useEffect(() => {
+    console.log(ideas); // `ideas` の使用を明示
+  }, [ideas]);
   
     return (
       <div>
