@@ -1467,12 +1467,12 @@
 import { DeleteIcon, EditIcon, CheckIcon, CloseIcon } from "@chakra-ui/icons";
 
 
-import { AddIcon ,ArrowUpIcon,HamburgerIcon,ArrowBackIcon } from "@chakra-ui/icons"; // 必要に応じてアイコンを変更
+import { ArrowUpIcon,HamburgerIcon,ArrowBackIcon } from "@chakra-ui/icons"; // 必要に応じてアイコンを変更
 
 
 import { useEffect, useState, useRef } from "react";
 import {
-  Button,
+
   Table,
   TableContainer,
   Tbody,
@@ -1486,7 +1486,6 @@ import {
   VStack,
   Box,
   Text,
-  Link as ChakraLink,
   Spinner,
   Heading,
 } from "@chakra-ui/react";
@@ -1504,7 +1503,7 @@ import { SearchIcon } from "@chakra-ui/icons";
 import { Tooltip } from "@chakra-ui/react";
 
 
-import { AxiosError } from "axios";
+// import { AxiosError } from "axios";
 
 interface Memo { 
   id: number;
@@ -1535,7 +1534,7 @@ export default function MemoApp() {
   const [isLoading, setIsLoading] = useState(true); // 読み込み状態
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const dateRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  // const dateRefs = useRef<Record<string, HTMLDivElement | null>>({});
   
   const [isSearchVisible, setIsSearchVisible] = useState(false); // 検索バー表示状態
   const [searchKeyword, setSearchKeyword] = useState(""); // 検索キーワード
@@ -1842,9 +1841,16 @@ export default function MemoApp() {
     {}
   );
 
+
+
+
+
+
   
 
   
+
+
 
 
 

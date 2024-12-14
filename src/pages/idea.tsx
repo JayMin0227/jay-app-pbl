@@ -95,13 +95,7 @@ import {
   Button,
   Input,
   Textarea,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableContainer,
+
 } from "@chakra-ui/react";
 
 export default function Ideas() {
