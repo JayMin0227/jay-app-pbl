@@ -132,6 +132,10 @@ export default function Ideas() {
       fetchIdeas();
     }
   
+
+
+
+    //ddd
     async function searchIdeas() {
       const res = await axios.get("http://localhost:8000/ideas/search", {
         params: { keyword: searchKeyword },
