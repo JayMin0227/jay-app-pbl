@@ -88,7 +88,8 @@
 
 // 修正後のコード
 // 共通部分: APIベースURLを環境変数から取得
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000").replace(/\/+$/, "");
+
 
 import { useState, useEffect } from "react";
 import axios from "axios";
