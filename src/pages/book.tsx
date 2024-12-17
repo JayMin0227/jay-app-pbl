@@ -1569,7 +1569,7 @@ export default function MemoApp() {
       console.log("送信データ:", dataToSend); // デバッグ用ログ
   
       // サーバーにデータを送信
-      const response = await axios.put(`${API_BASE_URL}/ideas`, dataToSend);//change
+      const response = await axios.put(`${API_BASE_URL}/ideas/${id}`, dataToSend);//change
   
       console.log("サーバーからの応答:", response.data); // 成功時の応答
   
