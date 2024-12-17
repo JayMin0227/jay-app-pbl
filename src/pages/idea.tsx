@@ -86,6 +86,9 @@
 //   }
 
 
+// 修正後のコード
+// 共通部分: APIベースURLを環境変数から取得
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -107,20 +110,20 @@ export default function Ideas() {
     const [editId, setEditId] = useState<number | null>(null);
   
     async function fetchIdeas() {
-      const res = await axios.get("http://localhost:8000/ideas");
+      const res = await axios.get(`${API_BASE_URL}/ideas`);
       setIdeas(res.data);
     }
   
     async function saveIdea() {
       if (editId) {
-        await axios.put(`http://localhost:8000/ideas/${editId}`, {
+        await axios.put(`${API_BASE_URL}/ideas/${editId}`, {
           title,
           content,
           tags,
         });
         setEditId(null);
       } else {
-        await axios.post("http://localhost:8000/ideas", {
+        await axios.post(`${API_BASE_URL}/ideas`, {
           title,
           content,
           tags,
@@ -137,7 +140,7 @@ export default function Ideas() {
 
     //ddd
     async function searchIdeas() {
-      const res = await axios.get("http://localhost:8000/ideas/search", {
+      const res = await axios.get(`${API_BASE_URL}/ideas/search`, {
         params: { keyword: searchKeyword },
       });
       setIdeas(res.data);

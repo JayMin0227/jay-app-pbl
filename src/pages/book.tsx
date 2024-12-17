@@ -1461,7 +1461,9 @@
 
 
 
-
+// 修正後のコード
+// 共通部分: APIベースURLを環境変数から取得
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 
 import { DeleteIcon, EditIcon, CheckIcon, CloseIcon } from "@chakra-ui/icons";
@@ -1567,7 +1569,7 @@ export default function MemoApp() {
       console.log("送信データ:", dataToSend); // デバッグ用ログ
   
       // サーバーにデータを送信
-      const response = await axios.put(`http://localhost:8000/ideas/${id}`, dataToSend);
+      const response = await axios.put(`${API_BASE_URL}/ideas`, dataToSend);//change
   
       console.log("サーバーからの応答:", response.data); // 成功時の応答
   
@@ -1674,7 +1676,7 @@ export default function MemoApp() {
 
   const fetchMemos = useCallback(async () => {
     try {
-      const res = await axios.get("http://localhost:8000/ideas");
+      const res = await axios.get(`${API_BASE_URL}/ideas`);
       const sortedMemos = res.data.map((memo: Memo) => ({
         ...memo,
         tags: ensureTagsArray(memo.tags),
@@ -1730,7 +1732,7 @@ export default function MemoApp() {
     }
   
     try {
-      const response = await axios.get("http://localhost:8000/ideas/search", {
+      const response = await axios.get(`${API_BASE_URL}/ideas/search`, {
         params: { keyword: searchKeyword.trim() },
       });
       setFilteredMemos(response.data); // 検索結果を状態に保存
@@ -1752,7 +1754,7 @@ export default function MemoApp() {
       return;
     }
     try {
-      await axios.post("http://localhost:8000/ideas", {
+      await axios.post(`${API_BASE_URL}/ideas`, {
         title: newTitle,
         content: newContent,
         tags: newTags,
@@ -1769,7 +1771,7 @@ export default function MemoApp() {
 
   const deleteMemo = async (id: number) => {
     try {
-      await axios.delete(`http://localhost:8000/ideas/${id}`);
+      await axios.delete(`${API_BASE_URL}/ideas/${id}`);
       fetchMemos();
     } catch (err) {
       console.error(err);
